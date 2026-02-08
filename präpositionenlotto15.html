@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Präpositionen-Lotto</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --success: #27ae60;
+            --error: #c0392b;
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --radius: 8px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            background-color: var(--accent);
+            color: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 { margin: 0; font-size: 1.6rem; }
+        p.subtitle { margin: 5px 0 0; opacity: 0.9; }
+
+        /* Grammatik-Hinweis */
+        .grammar-tip {
+            background: #fff;
+            border-left: 5px solid #f1c40f;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .grammar-tip span { font-weight: bold; color: #d35400; }
+
+        /* Lotto Karten */
+        .lotto-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid #e0e0e0;
+            transition: transform 0.2s;
+        }
+
+        .sentence {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .gap {
+            display: inline-block;
+            min-width: 40px;
+            border-bottom: 2px solid var(--accent);
+            color: var(--accent);
+            text-align: center;
+            padding: 0 5px;
+            font-weight: bold;
+        }
+
+        .translation {
+            display: block;
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        /* Die Auswahl-Optionen */
+        .options-grid {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .option-btn {
+            flex: 1;
+            min-width: 60px;
+            padding: 10px;
+            border: 2px solid #bdc3c7;
+            background: #f9f9f9;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #7f8c8d;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .option-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: #ecf0f1;
+        }
+
+        /* Statusklassen für Auswahl */
+        .option-btn.selected {
+            background-color: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        /* Statusklassen für Ergebnis */
+        .option-btn.correct {
+            background-color: var(--success) !important;
+            border-color: var(--success) !important;
+            color: white !important;
+        }
+
+        .option-btn.incorrect {
+            background-color: var(--error) !important;
+            border-color: var(--error) !important;
+            color: white !important;
+            opacity: 0.6;
+        }
+
+        /* Controls */
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            transition: opacity 0.2s;
+        }
+        button:hover { opacity: 0.9; }
+
+        .btn-check { background-color: var(--success); }
+        .btn-reset { background-color: #f39c12; }
+        .btn-solution { background-color: var(--accent); }
+
+        .solution-box {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f8f5;
+            border: 1px solid var(--success);
+            border-radius: var(--radius);
+        }
+
+        /* Mobile Anpassung */
+        @media (max-width: 600px) {
+            .sentence { font-size: 1.1rem; }
+            .option-btn { padding: 12px 5px; }
+            h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Präpositionen-Lotto</h1>
+        <p class="subtitle">Wählen Sie die richtige Präposition für die Lücke.</p>
+    </header>
+
+    <div class="grammar-tip">
+        <strong>Tipp:</strong><br>
+        в (in) ↔ из (aus)<br>
+        на (auf) ↔ с (von/herunter)<br>
+        <span>Achten Sie auf das Ziel oder den Startpunkt!</span>
+    </div>
+
+    <div id="quiz-container">
+        <!-- Das Quiz wird hier generiert -->
+        
+        <!-- Satz 1 -->
+        <div class="lotto-card" id="card-1">
+            <div class="sentence">1. Он вошел <span class="gap">...</span> комнату.</div>
+            <span class="translation">(Er ging in das Zimmer hinein.)</span>
+            <div class="options-grid">
+                <div class="option-btn" onclick="selectOption(1, 'из')">из</div>
+                <div class="option-btn" onclick="selectOption(1, 'в')">в</div>
+                <div class="option-btn" onclick="selectOption(1, 'на')">на</div>
+            </div>
+            <input type="hidden" id="ans-1" value="" data-correct="в">
+        </div>
+
+        <!-- Satz 2 -->
+        <div class="lotto-card" id="card-2">
+            <div class="sentence">2. Мы вышли <span class="gap">...</span> дома.</div>
+            <span class="translation">(Wir gingen aus dem Haus.)</span>
+            <div class="options-grid">
+                <div class="option-btn" onclick="selectOption(2, 'с')">с</div>
+                <div class="option-btn" onclick="selectOption(2, 'в')">в</div>
+                <div class="option-btn" onclick="selectOption(2, 'из')">из</div>
+            </div>
+            <input type="hidden" id="ans-2" value="" data-correct="из">
+        </div>
+
+        <!-- Satz 3 -->
+        <div class="lotto-card" id="card-3">
+            <div class="sentence">3. Студент пришел <span class="gap">...</span> университет.</div>
+            <span class="translation">(Der Student kam zur Universität.)</span>
+            <div class="options-grid">
+                <div class="option-btn" onclick="selectOption(3, 'в')">в</div>
+                <div class="option-btn" onclick="selectOption(3, 'на')">на</div>
+                <div class="option-btn" onclick="selectOption(3, 'с')">с</div>
+            </div>
+            <input type="hidden" id="ans-3" value="" data-correct="в">
+        </div>
+
+        <!-- Satz 4 (Arbeit - Ausnahme) -->
+        <div class="lotto-card" id="card-4">
+            <div class="sentence">4. Папа пришел <span class="gap">...</span> работы.</div>
+            <span class="translation">(Papa kam von der Arbeit.)</span>
+            <div class="options-grid">
+                <div class="option-btn" onclick="selectOption(4, 'из')">из</div>
+                <div class="option-btn" onclick="selectOption(4, 'с')">с</div>
+                <div class="option-btn" onclick="selectOption(4, 'в')">в</div>
+            </div>
+            <input type="hidden" id="ans-4" value="" data-correct="с">
+        </div>
+
+        <!-- Satz 5 -->
+        <div class="lotto-card" id="card-5">
+            <div class="sentence">5. Они уехали <span class="gap">...</span> России.</div>
+            <span class="translation">(Sie sind aus Russland weggefahren.)</span>
+            <div class="options-grid">
+                <div class="option-btn" onclick="selectOption(5, 'из')">из</div>
+                <div class="option-btn" onclick="selectOption(5, 'на')">на</div>
+                <div class="option-btn" onclick="selectOption(5, 'с')">с</div>
+            </div>
+            <input type="hidden" id="ans-5" value="" data-correct="из">
+        </div>
+
+        <!-- Satz 6 -->
+        <div class="lotto-card" id="card-6">
+            <div class="sentence">6. Туристы приехали <span class="gap">...</span> площадь.</div>
+            <span class="translation">(Die Touristen kamen auf dem Platz an.)</span>
+            <div class="options-grid">
+                <div class="option-btn" onclick="selectOption(6, 'в')">в</div>
+                <div class="option-btn" onclick="selectOption(6, 'с')">с</div>
+                <div class="option-btn" onclick="selectOption(6, 'на')">на</div>
+            </div>
+            <input type="hidden" id="ans-6" value="" data-correct="на">
+        </div>
+
+        <!-- Satz 7 -->
+        <div class="lotto-card" id="card-7">
+            <div class="sentence">7. Кот спрыгнул <span class="gap">...</span> стола.</div>
+            <span class="translation">(Die Katze sprang vom Tisch herunter.)</span>
+            <div class="options-grid">
+                <div class="option-btn" onclick="selectOption(7, 'из')">из</div>
+                <div class="option-btn" onclick="selectOption(7, 'со')">со</div>
+                <div class="option-btn" onclick="selectOption(7, 'на')">на</div>
+            </div>
+            <input type="hidden" id="ans-7" value="" data-correct="со">
+        </div>
+
+        <!-- Satz 8 -->
+        <div class="lotto-card" id="card-8">
+            <div class="sentence">8. Я иду <span class="gap">...</span> почту.</div>
+            <span class="translation">(Ich gehe zur Post.)</span>
+            <div class="options-grid">
+                <div class="option-btn" onclick="selectOption(8, 'на')">на</div>
+                <div class="option-btn" onclick="selectOption(8, 'в')">в</div>
+                <div class="option-btn" onclick="selectOption(8, 'из')">из</div>
+            </div>
+            <input type="hidden" id="ans-8" value="" data-correct="на">
+        </div>
+
+    </div>
+
+    <div class="solution-box" id="solution">
+        <strong>Lösungen:</strong><br>
+        1. в, 2. из, 3. в, 4. с (Ausnahme: на работу -> с работы), 5. из, 6. на, 7. со (vor Konsonantencluster), 8. на.
+    </div>
+
+    <div class="controls">
+        <button class="btn-check" onclick="checkAnswers()">Überprüfen</button>
+        <button class="btn-reset" onclick="resetGame()">Zurücksetzen</button>
+        <button class="btn-solution" onclick="toggleSolution()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    function selectOption(cardId, value) {
+        // 1. Speichere Wert im Hidden Input
+        const input = document.getElementById(`ans-${cardId}`);
+        input.value = value;
+
+        // 2. Visuelles Feedback für Auswahl (Selected State)
+        const card = document.getElementById(`card-${cardId}`);
+        const buttons = card.querySelectorAll('.option-btn');
+        const gap = card.querySelector('.gap');
+
+        buttons.forEach(btn => {
+            // Reset styles
+            btn.classList.remove('selected', 'correct', 'incorrect');
+            
+            // Set selected
+            if(btn.innerText === value) {
+                btn.classList.add('selected');
+            }
+        });
+
+        // 3. Optional: Lücke füllen
+        gap.innerText = value;
+    }
+
+    function checkAnswers() {
+        const total = 8;
+        let correctCount = 0;
+
+        for (let i = 1; i <= total; i++) {
+            const input = document.getElementById(`ans-${i}`);
+            const correctVal = input.getAttribute('data-correct');
+            const userVal = input.value;
+            
+            const card = document.getElementById(`card-${i}`);
+            const buttons = card.querySelectorAll('.option-btn');
+
+            buttons.forEach(btn => {
+                btn.classList.remove('selected'); // Remove blue selection
+                
+                if (btn.innerText === correctVal) {
+                    // Mark correct answer GREEN if user selected it
+                    if (userVal === correctVal) {
+                        btn.classList.add('correct');
+                    }
+                } 
+                
+                if (btn.innerText === userVal && userVal !== correctVal) {
+                    // Mark wrong user selection RED
+                    btn.classList.add('incorrect');
+                }
+            });
+
+            if (userVal === correctVal) correctCount++;
+        }
+    }
+
+    function resetGame() {
+        const total = 8;
+        for (let i = 1; i <= total; i++) {
+            // Reset Input
+            document.getElementById(`ans-${i}`).value = '';
+            
+            // Reset UI
+            const card = document.getElementById(`card-${i}`);
+            const gap = card.querySelector('.gap');
+            gap.innerText = '...'; // Reset Text
+            
+            const buttons = card.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('selected', 'correct', 'incorrect');
+            });
+        }
+        document.getElementById('solution').style.display = 'none';
+        document.querySelector('.btn-solution').innerText = "Lösung anzeigen";
+    }
+
+    function toggleSolution() {
+        const box = document.getElementById('solution');
+        const btn = document.querySelector('.btn-solution');
+        
+        if (box.style.display === 'block') {
+            box.style.display = 'none';
+            btn.innerText = "Lösung anzeigen";
+        } else {
+            box.style.display = 'block';
+            btn.innerText = "Lösung verbergen";
+        }
+    }
+</script>
+
+</body>
+</html>
