@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Fälle & Endungen (Lösungen)</title>
+    <style>
+        :root {
+            --primary: #8e44ad;
+            --primary-light: #9b59b6;
+            --selected: #3498db;
+            --success: #27ae60;
+            --error: #c0392b;
+            --bg: #fdfefe;
+            --text: #34495e;
+            --card-bg: #f4f6f7;
+            --radius: 8px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 { margin: 0; font-size: 1.6rem; }
+        p.subtitle { margin: 5px 0 0; opacity: 0.9; }
+
+        /* Grammatik-Hilfe */
+        .grammar-help {
+            background: #fff;
+            border: 2px solid var(--primary-light);
+            padding: 15px;
+            border-radius: var(--radius);
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .grammar-col {
+            flex: 1;
+            min-width: 250px;
+            text-align: center;
+        }
+
+        .case-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+        .acc { background: #d4e6f1; color: #2980b9; }
+        .gen { background: #fadbd8; color: #c0392b; }
+
+        /* Aufgaben-Layout */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .task-item {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: var(--radius);
+            border: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .sentence-start {
+            font-size: 1.1rem;
+            font-weight: 500;
+            min-width: 160px;
+        }
+
+        /* Die 2 Auswahl-Buttons */
+        .choice-group {
+            display: flex;
+            gap: 5px;
+        }
+
+        .choice-btn {
+            background: #fff;
+            border: 2px solid #bdc3c7;
+            color: #7f8c8d;
+            padding: 8px 16px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-weight: bold;
+            min-width: 100px;
+        }
+
+        .choice-btn:hover {
+            border-color: var(--selected);
+            color: var(--selected);
+        }
+
+        /* Status Klassen */
+        .choice-btn.selected {
+            background-color: var(--selected);
+            border-color: var(--selected);
+            color: white;
+        }
+
+        .choice-btn.correct {
+            background-color: var(--success) !important;
+            border-color: var(--success) !important;
+            color: white !important;
+        }
+
+        .choice-btn.incorrect {
+            background-color: var(--error) !important;
+            border-color: var(--error) !important;
+            color: white !important;
+            opacity: 0.6;
+        }
+
+        .choice-btn.missed {
+            border-color: var(--success) !important;
+            color: var(--success) !important;
+            background: #fff !important;
+        }
+
+        /* Controls */
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button.ctrl-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: opacity 0.2s;
+        }
+        button.ctrl-btn:hover { opacity: 0.9; }
+
+        .btn-check { background-color: var(--success); }
+        .btn-reset { background-color: #f39c12; }
+        .btn-solution { background-color: var(--primary); }
+
+        .feedback-text {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            min-height: 24px;
+        }
+
+        .solution-box {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #eafaf1;
+            border: 1px solid var(--success);
+            border-radius: 4px;
+        }
+
+        .solution-list {
+            margin: 10px 0 0 0;
+            padding-left: 20px;
+            columns: 2; /* Zwei Spalten für Kompaktheit */
+        }
+        .solution-list li {
+            margin-bottom: 5px;
+            font-size: 1rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            .task-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .choice-group {
+                width: 100%;
+                display: flex;
+            }
+            .choice-btn {
+                flex: 1;
+            }
+            .solution-list {
+                columns: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Fälle & Endungen</h1>
+        <p class="subtitle">Wählen Sie die richtige Endung: Akkusativ oder Genitiv?</p>
+    </header>
+
+    <div class="grammar-help">
+        <div class="grammar-col">
+            <span class="case-badge acc">Wohin? (Akkusativ)</span><br>
+            nach: <strong>в, на</strong><br>
+            -а &rarr; <strong>-у</strong>
+        </div>
+        <div class="grammar-col">
+            <span class="case-badge gen">Woher? (Genitiv)</span><br>
+            nach: <strong>из, с</strong><br>
+            -а &rarr; <strong>-ы</strong>
+        </div>
+    </div>
+
+    <div class="task-list" id="quiz">
+
+        <!-- 1 -->
+        <div class="task-item" id="q1" data-correct="школу">
+            <span class="sentence-start">1. Студенты идут в</span>
+            <div class="choice-group">
+                <button class="choice-btn" onclick="selectOption(1, 'школу')">школу</button>
+                <button class="choice-btn" onclick="selectOption(1, 'школы')">школы</button>
+            </div>
+        </div>
+
+        <!-- 2 -->
+        <div class="task-item" id="q2" data-correct="школы">
+            <span class="sentence-start">2. Студенты идут из</span>
+            <div class="choice-group">
+                <button class="choice-btn" onclick="selectOption(2, 'школу')">школу</button>
+                <button class="choice-btn" onclick="selectOption(2, 'школы')">школы</button>
+            </div>
+        </div>
+
+        <!-- 3 -->
+        <div class="task-item" id="q3" data-correct="магазин">
+            <span class="sentence-start">3. Я вхожу в</span>
+            <div class="choice-group">
+                <button class="choice-btn" onclick="selectOption(3, 'магазин')">магазин</button>
+                <button class="choice-btn" onclick="selectOption(3, 'магазина')">магазина</button>
+            </div>
+        </div>
+
+        <!-- 4 -->
+        <div class="task-item" id="q4" data-correct="магазина">
+            <span class="sentence-start">4. Я выхожу из</span>
+            <div class="choice-group">
+                <button class="choice-btn" onclick="selectOption(4, 'магазин')">магазин</button>
+                <button class="choice-btn" onclick="selectOption(4, 'магазина')">магазина</button>
+            </div>
+        </div>
+
+        <!-- 5 -->
+        <div class="task-item" id="q5" data-correct="работу">
+            <span class="sentence-start">5. Папа едет на</span>
+            <div class="choice-group">
+                <button class="choice-btn" onclick="selectOption(5, 'работу')">работу</button>
+                <button class="choice-btn" onclick="selectOption(5, 'работы')">работы</button>
+            </div>
+        </div>
+
+        <!-- 6 -->
+        <div class="task-item" id="q6" data-correct="работы">
+            <span class="sentence-start">6. Папа едет с</span>
+            <div class="choice-group">
+                <button class="choice-btn" onclick="selectOption(6, 'работу')">работу</button>
+                <button class="choice-btn" onclick="selectOption(6, 'работы')">работы</button>
+            </div>
+        </div>
+
+        <!-- 7 -->
+        <div class="task-item" id="q7" data-correct="Москву">
+            <span class="sentence-start">7. Мы переехали в</span>
+            <div class="choice-group">
+                <button class="choice-btn" onclick="selectOption(7, 'Москву')">Москву</button>
+                <button class="choice-btn" onclick="selectOption(7, 'Москвы')">Москвы</button>
+            </div>
+        </div>
+
+        <!-- 8 -->
+        <div class="task-item" id="q8" data-correct="Москвы">
+            <span class="sentence-start">8. Мы приехали из</span>
+            <div class="choice-group">
+                <button class="choice-btn" onclick="selectOption(8, 'Москву')">Москву</button>
+                <button class="choice-btn" onclick="selectOption(8, 'Москвы')">Москвы</button>
+            </div>
+        </div>
+
+        <!-- 9 -->
+        <div class="task-item" id="q9" data-correct="гараж">
+            <span class="sentence-start">9. Машина въехала в</span>
+            <div class="choice-group">
+                <button class="choice-btn" onclick="selectOption(9, 'гараж')">гараж</button>
+                <button class="choice-btn" onclick="selectOption(9, 'гаража')">гаража</button>
+            </div>
+        </div>
+
+        <!-- 10 -->
+        <div class="task-item" id="q10" data-correct="гаража">
+            <span class="sentence-start">10. Машина выехала из</span>
+            <div class="choice-group">
+                <button class="choice-btn" onclick="selectOption(10, 'гараж')">гараж</button>
+                <button class="choice-btn" onclick="selectOption(10, 'гаража')">гаража</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="feedback-text" id="feedback"></div>
+
+    <div class="solution-box" id="solutionBox">
+        <strong>Lösungen:</strong>
+        <ol class="solution-list">
+            <li><strong>школу</strong> (Akkusativ)</li>
+            <li><strong>школы</strong> (Genitiv)</li>
+            <li><strong>магазин</strong> (Akkusativ)</li>
+            <li><strong>магазина</strong> (Genitiv)</li>
+            <li><strong>работу</strong> (Akkusativ)</li>
+            <li><strong>работы</strong> (Genitiv)</li>
+            <li><strong>Москву</strong> (Akkusativ)</li>
+            <li><strong>Москвы</strong> (Genitiv)</li>
+            <li><strong>гараж</strong> (Akkusativ)</li>
+            <li><strong>гаража</strong> (Genitiv)</li>
+        </ol>
+    </div>
+
+    <div class="controls">
+        <button class="ctrl-btn btn-check" onclick="checkAnswers()">Überprüfen</button>
+        <button class="ctrl-btn btn-reset" onclick="resetForm()">Zurücksetzen</button>
+        <button class="ctrl-btn btn-solution" onclick="toggleSolution()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    let userSelections = {};
+
+    function selectOption(qId, value) {
+        userSelections[qId] = value;
+        const container = document.getElementById('q' + qId);
+        const buttons = container.querySelectorAll('.choice-btn');
+        buttons.forEach(btn => {
+            btn.classList.remove('selected', 'correct', 'incorrect', 'missed');
+            if (btn.innerText === value) {
+                btn.classList.add('selected');
+            }
+        });
+    }
+
+    function checkAnswers() {
+        let correctCount = 0;
+        const total = 10;
+
+        for (let i = 1; i <= total; i++) {
+            const container = document.getElementById('q' + i);
+            const correctVal = container.getAttribute('data-correct');
+            const selectedVal = userSelections[i];
+            const buttons = container.querySelectorAll('.choice-btn');
+
+            buttons.forEach(btn => {
+                btn.classList.remove('selected'); 
+
+                // Prüfen: Ist dies der richtige Button?
+                if (btn.innerText === correctVal) {
+                    if (selectedVal === correctVal) {
+                        btn.classList.add('correct'); // Richtig gewählt
+                    } else {
+                        btn.classList.add('missed'); // Vergessen (wäre richtig)
+                    }
+                }
+
+                // Prüfen: Ist dies der falsche Button?
+                if (btn.innerText !== correctVal && btn.innerText === selectedVal) {
+                    btn.classList.add('incorrect'); // Falsch gewählt
+                }
+            });
+
+            if (selectedVal === correctVal) correctCount++;
+        }
+
+        const feedback = document.getElementById('feedback');
+        if (correctCount === total) {
+            feedback.style.color = 'var(--success)';
+            feedback.textContent = "Fantastisch! Alles richtig.";
+        } else {
+            feedback.style.color = 'var(--text)';
+            feedback.textContent = `Sie haben ${correctCount} von ${total} richtig.`;
+        }
+    }
+
+    function resetForm() {
+        userSelections = {};
+        const buttons = document.querySelectorAll('.choice-btn');
+        buttons.forEach(btn => {
+            btn.classList.remove('selected', 'correct', 'incorrect', 'missed');
+        });
+        document.getElementById('feedback').textContent = '';
+        document.getElementById('solutionBox').style.display = 'none';
+        document.querySelector('.btn-solution').textContent = "Lösung anzeigen";
+    }
+
+    function toggleSolution() {
+        const box = document.getElementById('solutionBox');
+        const btn = document.querySelector('.btn-solution');
+        
+        if (box.style.display === 'block') {
+            box.style.display = 'none';
+            btn.textContent = "Lösung anzeigen";
+        } else {
+            box.style.display = 'block';
+            btn.textContent = "Lösung verbergen";
+        }
+    }
+</script>
+
+</body>
+</html>
