@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Antonyme (Gegenteile)</title>
+    <style>
+        :root {
+            --primary: #8e44ad; /* Lila für Semantik */
+            --primary-hover: #9b59b6;
+            --success: #27ae60;
+            --error: #c0392b;
+            --bg: #f4f6f7;
+            --text: #2c3e50;
+            --card-bg: #ffffff;
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 { margin: 0; font-size: 1.8rem; }
+        p.subtitle { margin-top: 10px; opacity: 0.9; font-size: 1.1rem; }
+
+        .intro-box {
+            background: #fff;
+            padding: 15px;
+            border-left: 5px solid var(--primary);
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+
+        /* Aufgaben-Grid */
+        .pair-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .pair-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid #e0e0e0;
+            transition: transform 0.2s;
+        }
+
+        .pair-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .word-source {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        .word-translation {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .arrow {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            font-size: 1.1rem;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            background-color: #fff;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        /* Feedback Styles */
+        .correct-input {
+            border-color: var(--success) !important;
+            background-color: #eafaf1;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .incorrect-input {
+            border-color: var(--error) !important;
+            background-color: #fdedec;
+            color: var(--error);
+        }
+
+        /* Buttons */
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            transition: opacity 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        button:hover { opacity: 0.9; }
+
+        .btn-check { background-color: var(--success); }
+        .btn-reset { background-color: #f39c12; }
+        .btn-solution { background-color: var(--primary); }
+
+        .feedback-area {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-height: 30px;
+        }
+
+        .solution-list {
+            display: none;
+            margin-top: 20px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .solution-list ul {
+            list-style-type: none;
+            padding: 0;
+            columns: 2; /* Zwei Spalten für Lösungen */
+        }
+        
+        .solution-list li {
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .pair-container {
+                grid-template-columns: 1fr;
+            }
+            .solution-list ul {
+                columns: 1;
+            }
+            h1 { font-size: 1.5rem; }
+            button { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Antonyme: Gegenteile finden</h1>
+        <p class="subtitle">Wählen Sie das logische Gegenteil zu jedem Bewegungsverb.</p>
+    </header>
+
+    <div class="intro-box">
+        <strong>Erinnerung:</strong><br>
+        в- (hinein) ↔ вы- (hinaus)<br>
+        при- (ankommen) ↔ у- (wegfahren/weggehen)
+    </div>
+
+    <div class="pair-container" id="quiz">
+
+        <!-- Paar 1 -->
+        <div class="pair-card">
+            <div class="word-source">входить</div>
+            <div class="word-translation">(hineingehen)</div>
+            <div class="arrow">↕</div>
+            <select data-correct="выходить">
+                <option value="">-- Wählen --</option>
+                <option value="уходить">уходить</option>
+                <option value="выходить">выходить</option>
+                <option value="приходить">приходить</option>
+            </select>
+        </div>
+
+        <!-- Paar 2 -->
+        <div class="pair-card">
+            <div class="word-source">уезжать</div>
+            <div class="word-translation">(wegfahren)</div>
+            <div class="arrow">↕</div>
+            <select data-correct="приезжать">
+                <option value="">-- Wählen --</option>
+                <option value="выезжать">выезжать</option>
+                <option value="въезжать">въезжать</option>
+                <option value="приезжать">приезжать</option>
+            </select>
+        </div>
+
+        <!-- Paar 3 -->
+        <div class="pair-card">
+            <div class="word-source">вошел</div>
+            <div class="word-translation">(ging hinein - Verg. m.)</div>
+            <div class="arrow">↕</div>
+            <select data-correct="вышел">
+                <option value="">-- Wählen --</option>
+                <option value="ушел">ушел</option>
+                <option value="вышел">вышел</option>
+                <option value="пришел">пришел</option>
+            </select>
+        </div>
+
+        <!-- Paar 4 -->
+        <div class="pair-card">
+            <div class="word-source">прилетел</div>
+            <div class="word-translation">(kam angeflogen)</div>
+            <div class="arrow">↕</div>
+            <select data-correct="улетел">
+                <option value="">-- Wählen --</option>
+                <option value="вылетел">вылетел</option>
+                <option value="улетел">улетел</option>
+                <option value="залетел">залетел</option>
+            </select>
+        </div>
+
+        <!-- Paar 5 -->
+        <div class="pair-card">
+            <div class="word-source">въезжать</div>
+            <div class="word-translation">(hineinfahren)</div>
+            <div class="arrow">↕</div>
+            <select data-correct="выезжать">
+                <option value="">-- Wählen --</option>
+                <option value="выезжать">выезжать</option>
+                <option value="уезжать">уезжать</option>
+                <option value="приезжать">приезжать</option>
+            </select>
+        </div>
+
+        <!-- Paar 6 -->
+        <div class="pair-card">
+            <div class="word-source">уходит</div>
+            <div class="word-translation">(geht weg - er/sie)</div>
+            <div class="arrow">↕</div>
+            <select data-correct="приходит">
+                <option value="">-- Wählen --</option>
+                <option value="выходит">выходит</option>
+                <option value="входит">входит</option>
+                <option value="приходит">приходит</option>
+            </select>
+        </div>
+
+        <!-- Paar 7 -->
+        <div class="pair-card">
+            <div class="word-source">выйти</div>
+            <div class="word-translation">(hinausgehen - Perfektiv)</div>
+            <div class="arrow">↕</div>
+            <select data-correct="войти">
+                <option value="">-- Wählen --</option>
+                <option value="уйти">уйти</option>
+                <option value="прийти">прийти</option>
+                <option value="войти">войти</option>
+            </select>
+        </div>
+
+        <!-- Paar 8 -->
+        <div class="pair-card">
+            <div class="word-source">приехали</div>
+            <div class="word-translation">(kamen an - Plural)</div>
+            <div class="arrow">↕</div>
+            <select data-correct="уехали">
+                <option value="">-- Wählen --</option>
+                <option value="выехали">выехали</option>
+                <option value="уехали">уехали</option>
+                <option value="въехали">въехали</option>
+            </select>
+        </div>
+
+    </div>
+
+    <div class="feedback-area" id="feedback"></div>
+
+    <div class="solution-list" id="solutionBox">
+        <h3>Lösungen:</h3>
+        <ul>
+            <li>входить ↔ <strong>выходить</strong></li>
+            <li>уезжать ↔ <strong>приезжать</strong></li>
+            <li>вошел ↔ <strong>вышел</strong></li>
+            <li>прилетел ↔ <strong>улетел</strong></li>
+            <li>въезжать ↔ <strong>выезжать</strong></li>
+            <li>уходит ↔ <strong>приходит</strong></li>
+            <li>выйти ↔ <strong>войти</strong></li>
+            <li>приехали ↔ <strong>уехали</strong></li>
+        </ul>
+    </div>
+
+    <div class="controls">
+        <button class="btn-check" onclick="checkPairs()">Überprüfen</button>
+        <button class="btn-reset" onclick="resetPairs()">Zurücksetzen</button>
+        <button class="btn-solution" onclick="toggleSolution()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    function checkPairs() {
+        const selects = document.querySelectorAll('select');
+        let correctCount = 0;
+        
+        selects.forEach(select => {
+            const userValue = select.value;
+            const correctValue = select.getAttribute('data-correct');
+            
+            // Klassen zurücksetzen
+            select.classList.remove('correct-input', 'incorrect-input');
+
+            if (userValue === "") {
+                // Nichts ausgewählt - keine Markierung oder rot (optional)
+                select.classList.add('incorrect-input');
+            } else if (userValue === correctValue) {
+                select.classList.add('correct-input');
+                correctCount++;
+            } else {
+                select.classList.add('incorrect-input');
+            }
+        });
+
+        const feedback = document.getElementById('feedback');
+        const total = selects.length;
+
+        if (correctCount === total) {
+            feedback.style.color = 'var(--success)';
+            feedback.innerHTML = "Ausgezeichnet! Alle Gegenteile sind richtig gefunden.";
+        } else if (correctCount === 0) {
+            feedback.style.color = 'var(--error)';
+            feedback.innerHTML = "Bitte versuchen Sie es noch einmal.";
+        } else {
+            feedback.style.color = '#e67e22';
+            feedback.innerHTML = `Sie haben ${correctCount} von ${total} Paaren richtig.`;
+        }
+    }
+
+    function resetPairs() {
+        const selects = document.querySelectorAll('select');
+        selects.forEach(select => {
+            select.value = "";
+            select.classList.remove('correct-input', 'incorrect-input');
+        });
+        document.getElementById('feedback').innerHTML = "";
+        document.getElementById('solutionBox').style.display = 'none';
+        document.querySelector('.btn-solution').textContent = "Lösung anzeigen";
+    }
+
+    function toggleSolution() {
+        const box = document.getElementById('solutionBox');
+        const btn = document.querySelector('.btn-solution');
+        
+        if (box.style.display === 'block') {
+            box.style.display = 'none';
+            btn.textContent = "Lösung anzeigen";
+        } else {
+            box.style.display = 'block';
+            btn.textContent = "Lösung verbergen";
+        }
+    }
+</script>
+
+</body>
+</html>
