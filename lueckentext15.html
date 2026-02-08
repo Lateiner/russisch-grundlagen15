@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Storytelling (Iwan)</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #e67e22; /* Story-Farbe */
+            --success: #27ae60;
+            --error: #c0392b;
+            --bg: #fdfefe;
+            --text: #34495e;
+            --card-bg: #ffffff;
+            --radius: 8px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.8;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 { margin: 0; font-size: 1.6rem; }
+        p.subtitle { margin: 5px 0 0; opacity: 0.9; color: #ecf0f1; }
+
+        /* Story Container */
+        .story-card {
+            background: white;
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--accent);
+            font-size: 1.15rem; /* Etwas größer für Lesbarkeit */
+        }
+
+        .story-title {
+            font-weight: bold;
+            font-size: 1.4rem;
+            margin-bottom: 25px;
+            color: var(--accent);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Inline Select Styling */
+        select {
+            display: inline-block;
+            padding: 5px 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            color: var(--primary);
+            background-color: #f4f6f7;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 0 5px;
+            transition: all 0.3s;
+            font-weight: bold;
+            -webkit-appearance: none; /* Für besseres Styling auf Mobile */
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%232c3e50%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right .7em top 50%;
+            background-size: .65em auto;
+            padding-right: 1.5em;
+        }
+
+        select:focus {
+            border-color: var(--accent);
+            outline: none;
+            background-color: #fff;
+        }
+
+        select::-ms-expand { display: none; }
+
+        /* Feedback Styles */
+        select.correct-input {
+            border-color: var(--success) !important;
+            background-color: #eafaf1 !important;
+            color: var(--success) !important;
+        }
+
+        select.incorrect-input {
+            border-color: var(--error) !important;
+            background-color: #fdedec !important;
+            color: var(--error) !important;
+        }
+
+        .hint {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        /* Controls */
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: opacity 0.2s;
+        }
+        button:hover { opacity: 0.9; }
+
+        .btn-check { background-color: var(--success); }
+        .btn-reset { background-color: #f39c12; }
+        .btn-solution { background-color: var(--primary); }
+
+        .feedback-text {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            min-height: 24px;
+        }
+
+        .solution-box {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background: #fcf3cf;
+            border: 1px solid #f1c40f;
+            border-radius: var(--radius);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            .story-card {
+                padding: 15px;
+            }
+            select {
+                width: 100%; /* Volle Breite auf Handy für leichtere Auswahl */
+                margin: 5px 0;
+            }
+            .hint { display: block; margin-bottom: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Storytelling: Lückentext</h1>
+        <p class="subtitle">Wählen Sie das passende Verb aus der Liste.</p>
+    </header>
+
+    <div class="story-card">
+        <div class="story-title">Ein Tag im Leben von Iwan</div>
+        
+        <p>
+            Вчера был обычный день. Утром Iwan позавтракал и в 8:00
+            <select data-answer="вышел">
+                <option value="">...</option>
+                <option value="ушел">ушел</option>
+                <option value="вышел">вышел</option>
+                <option value="вошел">вошел</option>
+            </select>
+            <span class="hint">(ging hinaus 🚶)</span>
+            из дома.
+        </p>
+        
+        <p>
+            Он сел в машину и
+            <select data-answer="выехал">
+                <option value="">...</option>
+                <option value="выехал">выехал</option>
+                <option value="въехал">въехал</option>
+                <option value="вышел">вышел</option>
+            </select>
+            <span class="hint">(fuhr hinaus 🚗)</span>
+            из гаража. На дороге были пробки.
+        </p>
+
+        <p>
+            Наконец, в 9:00 он
+            <select data-answer="приехал">
+                <option value="">...</option>
+                <option value="пришел">пришел</option>
+                <option value="уехал">уехал</option>
+                <option value="приехал">приехал</option>
+            </select>
+            <span class="hint">(kam an 🚗)</span>
+            в офис.
+        </p>
+
+        <p>
+            Iwan открыл дверь и
+            <select data-answer="вошел">
+                <option value="">...</option>
+                <option value="вошел">вошел</option>
+                <option value="вышел">вышел</option>
+                <option value="пришел">пришел</option>
+            </select>
+            <span class="hint">(ging hinein 🚶)</span>
+            в кабинет. Он работал весь день.
+        </p>
+
+        <p>
+            Вечером, в 18:00, он
+            <select data-answer="ушел">
+                <option value="">...</option>
+                <option value="вышел">вышел</option>
+                <option value="ушел">ушел</option>
+                <option value="пришел">пришел</option>
+            </select>
+            <span class="hint">(ging weg 🚶)</span>
+            с работы, сел в машину и поехал домой.
+        </p>
+
+        <p>
+            Он
+            <select data-answer="приехал">
+                <option value="">...</option>
+                <option value="уехал">уехал</option>
+                <option value="приехал">приехал</option>
+                <option value="заехал">заехал</option>
+            </select>
+            <span class="hint">(kam an 🚗)</span>
+            домой в 19:00 и сразу включил телевизор.
+        </p>
+    </div>
+
+    <div class="feedback-text" id="feedback"></div>
+
+    <div class="solution-box" id="solutionBox">
+        <strong>Komplette Geschichte (Lösung):</strong>
+        <p>
+            ... Iwan <strong>вышел</strong> из дома. Он <strong>выехал</strong> из гаража. ... он <strong>приехал</strong> в офис. Iwan <strong>вошел</strong> в кабинет. ... он <strong>ушел</strong> с работы. Он <strong>приехал</strong> домой ...
+        </p>
+    </div>
+
+    <div class="controls">
+        <button class="btn-check" onclick="checkAnswers()">Überprüfen</button>
+        <button class="btn-reset" onclick="resetForm()">Zurücksetzen</button>
+        <button class="btn-solution" onclick="toggleSolution()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    function checkAnswers() {
+        const selects = document.querySelectorAll('select');
+        let correctCount = 0;
+        let allSelected = true;
+        
+        selects.forEach(select => {
+            const userVal = select.value;
+            const correctVal = select.getAttribute('data-answer');
+
+            // Reset classes
+            select.classList.remove('correct-input', 'incorrect-input');
+
+            if (userVal === "") {
+                allSelected = false;
+                select.classList.add('incorrect-input'); // Mark empty as incorrect/missing
+            } else if (userVal === correctVal) {
+                select.classList.add('correct-input');
+                correctCount++;
+            } else {
+                select.classList.add('incorrect-input');
+            }
+        });
+
+        const feedback = document.getElementById('feedback');
+        
+        if (!allSelected && correctCount !== selects.length) {
+            feedback.style.color = '#e67e22';
+            feedback.textContent = "Bitte wählen Sie für alle Lücken eine Antwort aus.";
+            return;
+        }
+
+        if (correctCount === selects.length) {
+            feedback.style.color = 'var(--success)';
+            feedback.textContent = "Perfekt! Die Geschichte ist korrekt.";
+        } else {
+            feedback.style.color = 'var(--error)';
+            feedback.textContent = `Sie haben ${correctCount} von ${selects.length} Verben richtig.`;
+        }
+    }
+
+    function resetForm() {
+        const selects = document.querySelectorAll('select');
+        selects.forEach(select => {
+            select.selectedIndex = 0; // Reset to first option "..."
+            select.classList.remove('correct-input', 'incorrect-input');
+        });
+        document.getElementById('feedback').textContent = '';
+        document.getElementById('solutionBox').style.display = 'none';
+        document.querySelector('.btn-solution').textContent = "Lösung anzeigen";
+    }
+
+    function toggleSolution() {
+        const box = document.getElementById('solutionBox');
+        const btn = document.querySelector('.btn-solution');
+        
+        if (box.style.display === 'block') {
+            box.style.display = 'none';
+            btn.textContent = "Lösung anzeigen";
+        } else {
+            box.style.display = 'block';
+            btn.textContent = "Lösung verbergen";
+        }
+    }
+</script>
+
+</body>
+</html>
