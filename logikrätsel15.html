@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Logikrätsel</title>
+    <style>
+        :root {
+            --primary: #2c3e50; /* Dunkelblau für "Detektiv"-Thema */
+            --accent: #8e44ad;  /* Lila für Logik */
+            --success: #27ae60;
+            --error: #c0392b;
+            --bg: #fdfefe;
+            --text: #34495e;
+            --card-bg: #ecf0f1;
+            --radius: 8px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 25px;
+            border-radius: var(--radius);
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-bottom: 4px solid var(--accent);
+        }
+
+        h1 { margin: 0; font-size: 1.6rem; }
+        p.subtitle { margin: 5px 0 0; opacity: 0.9; color: #ecf0f1; }
+
+        /* Hinweis Box */
+        .clue-box {
+            background: #fff;
+            border: 2px solid var(--accent);
+            padding: 15px;
+            border-radius: var(--radius);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .clue-icon {
+            font-size: 2rem;
+        }
+
+        /* Rätsel Karten */
+        .riddle-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 5px solid var(--primary);
+        }
+
+        .scenario {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .verb-highlight {
+            color: var(--error); /* Verben hervorheben */
+            font-weight: bold;
+        }
+
+        .question {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        /* Antwortmöglichkeiten */
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: #f4f6f7;
+            border-color: var(--accent);
+        }
+
+        input[type="radio"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+            accent-color: var(--accent);
+        }
+
+        /* Feedback Styles */
+        .correct-answer {
+            background-color: #eafaf1 !important;
+            border-color: var(--success) !important;
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .wrong-answer {
+            background-color: #fdedec !important;
+            border-color: var(--error) !important;
+            opacity: 0.7;
+            text-decoration: line-through;
+        }
+
+        /* Controls */
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: opacity 0.2s;
+        }
+        button:hover { opacity: 0.9; }
+
+        .btn-check { background-color: var(--success); }
+        .btn-reset { background-color: #f39c12; }
+        .btn-solution { background-color: var(--primary); }
+
+        .feedback-text {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            min-height: 24px;
+        }
+
+        .solution-box {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background: #eef2f7;
+            border-top: 3px solid var(--primary);
+            border-radius: var(--radius);
+        }
+
+        /* Mobile */
+        @media (max-width: 600px) {
+            .clue-box { flex-direction: column; gap: 5px; text-align: center; align-items: center;}
+            .option-label { font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Logikrätsel: Wo ist er?</h1>
+        <p class="subtitle">Analysieren Sie die Verben und finden Sie den Ort.</p>
+    </header>
+
+    <div class="clue-box">
+        <div class="clue-icon">🕵️‍♂️</div>
+        <div>
+            <strong>Detektiv-Hinweis:</strong><br>
+            <em>Вышел</em> = Er hat den Raum verlassen (ist aber vielleicht noch in der Nähe).<br>
+            <em>Ушел / Уехал</em> = Er hat den Ort komplett verlassen (ist weit weg).
+        </div>
+    </div>
+
+    <div id="quiz">
+
+        <!-- Rätsel 1 (Maxim) -->
+        <div class="riddle-card" id="r1">
+            <div class="scenario">
+                Maxim <span class="verb-highlight">вышел</span> из офиса, но ещё не <span class="verb-highlight">уехал</span> домой.<br>
+                <small>(Maxim ist aus dem Büro gegangen, aber noch nicht nach Hause gefahren.)</small>
+            </div>
+            <div class="question">Wo ist Maxim wahrscheinlich?</div>
+            <div class="options">
+                <label class="option-label">
+                    <input type="radio" name="q1" value="a"> Er sitzt noch an seinem Schreibtisch.
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="q1" value="b" data-correct="true"> Er steht im Flur, raucht draußen oder ist auf dem Parkplatz.
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="q1" value="c"> Er ist bereits zu Hause.
+                </label>
+            </div>
+        </div>
+
+        <!-- Rätsel 2 (Hotel) -->
+        <div class="riddle-card" id="r2">
+            <div class="scenario">
+                Анна уже <span class="verb-highlight">приехала</span> в отель, но ещё не <span class="verb-highlight">вошла</span> в номер.<br>
+                <small>(Anna ist schon im Hotel angekommen, aber noch nicht ins Zimmer hineingegangen.)</small>
+            </div>
+            <div class="question">Wo ist Anna?</div>
+            <div class="options">
+                <label class="option-label">
+                    <input type="radio" name="q2" value="a" data-correct="true"> Sie steht an der Rezeption (Lobby).
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="q2" value="b"> Sie ist noch im Taxi unterwegs.
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="q2" value="c"> Sie schläft im Bett.
+                </label>
+            </div>
+        </div>
+
+        <!-- Rätsel 3 (Chef) -->
+        <div class="riddle-card" id="r3">
+            <div class="scenario">
+                Sekretärin: "Директор уже <span class="verb-highlight">ушел</span>."<br>
+                <small>(Sekretärin: "Der Direktor ist schon weggegangen.")</small>
+            </div>
+            <div class="question">Was bedeutet das?</div>
+            <div class="options">
+                <label class="option-label">
+                    <input type="radio" name="q3" value="a"> Er ist kurz auf der Toilette.
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="q3" value="b"> Er steht im Korridor und telefoniert.
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="q3" value="c" data-correct="true"> Er hat Feierabend gemacht und ist weg.
+                </label>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="feedback-text" id="feedback"></div>
+
+    <div class="solution-box" id="solutionBox">
+        <strong>Lösungserklärung:</strong>
+        <ul style="margin-top: 10px;">
+            <li><strong>Rätsel 1:</strong> <em>Вышел</em> bedeutet nur, die Grenze (Tür) überschritten zu haben. Da er nicht <em>уехал</em> (weggefahren) ist, muss er noch in unmittelbarer Nähe des Gebäudes sein.</li>
+            <li><strong>Rätsel 2:</strong> <em>Приехала</em> heißt, das Ziel (Hotel) ist erreicht. Aber <em>не вошла</em> heißt, sie ist noch nicht im spezifischen Raum. Also Lobby/Rezeption.</li>
+            <li><strong>Rätsel 3:</strong> <em>Ушел</em> impliziert eine endgültige Handlung für diesen Zeitraum. Wenn er nur kurz weg wäre, würde man sagen "он вышел".</li>
+        </ul>
+    </div>
+
+    <div class="controls">
+        <button class="btn-check" onclick="checkAnswers()">Überprüfen</button>
+        <button class="btn-reset" onclick="resetForm()">Zurücksetzen</button>
+        <button class="btn-solution" onclick="toggleSolution()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    function checkAnswers() {
+        const cards = document.querySelectorAll('.riddle-card');
+        let correctCount = 0;
+        let answeredCount = 0;
+
+        cards.forEach(card => {
+            const radios = card.querySelectorAll('input[type="radio"]');
+            const labels = card.querySelectorAll('.option-label');
+            let isAnswered = false;
+
+            // Reset Styles
+            labels.forEach(l => l.classList.remove('correct-answer', 'wrong-answer'));
+
+            radios.forEach(radio => {
+                if (radio.checked) {
+                    isAnswered = true;
+                    if (radio.getAttribute('data-correct') === 'true') {
+                        correctCount++;
+                        radio.parentElement.classList.add('correct-answer');
+                    } else {
+                        radio.parentElement.classList.add('wrong-answer');
+                    }
+                }
+            });
+
+            if (isAnswered) answeredCount++;
+        });
+
+        const feedback = document.getElementById('feedback');
+
+        if (answeredCount < cards.length) {
+            feedback.style.color = '#e67e22';
+            feedback.textContent = "Bitte lösen Sie alle 3 Rätsel.";
+            return;
+        }
+
+        if (correctCount === cards.length) {
+            feedback.style.color = 'var(--success)';
+            feedback.textContent = "Hervorragend kombiniert, Detektiv!";
+        } else {
+            feedback.style.color = 'var(--error)';
+            feedback.textContent = `Sie haben ${correctCount} von ${cards.length} Rätseln gelöst.`;
+        }
+    }
+
+    function resetForm() {
+        const radios = document.querySelectorAll('input[type="radio"]');
+        radios.forEach(r => r.checked = false);
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(l => l.classList.remove('correct-answer', 'wrong-answer'));
+        
+        document.getElementById('feedback').textContent = '';
+        document.getElementById('solutionBox').style.display = 'none';
+        document.querySelector('.btn-solution').textContent = "Lösung anzeigen";
+    }
+
+    function toggleSolution() {
+        const box = document.getElementById('solutionBox');
+        const btn = document.querySelector('.btn-solution');
+        
+        if (box.style.display === 'block') {
+            box.style.display = 'none';
+            btn.textContent = "Lösung anzeigen";
+        } else {
+            box.style.display = 'block';
+            btn.textContent = "Lösung verbergen";
+        }
+    }
+</script>
+
+</body>
+</html>
