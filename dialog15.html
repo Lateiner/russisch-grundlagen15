@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Dialoganalyse</title>
+    <style>
+        :root {
+            --primary: #34495e;
+            --chat-bg: #e5ddd5; /* WhatsApp-like background color */
+            --msg-sent: #dcf8c6;
+            --msg-received: #ffffff;
+            --success: #27ae60;
+            --error: #c0392b;
+            --bg: #f4f7f6;
+            --text: #2c3e50;
+            --radius: 12px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 { margin: 0; font-size: 1.6rem; }
+        p.subtitle { margin: 5px 0 0; opacity: 0.9; color: #ecf0f1; }
+
+        /* Chat Design */
+        .chat-window {
+            background-color: var(--chat-bg);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            border: 1px solid #dcdcdc;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 10px;
+            position: relative;
+            font-size: 1.05rem;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+        }
+
+        .message.anna {
+            align-self: flex-start;
+            background-color: var(--msg-received);
+            border-top-left-radius: 0;
+        }
+
+        .message.boris {
+            align-self: flex-end;
+            background-color: var(--msg-sent);
+            border-top-right-radius: 0;
+        }
+
+        .sender-name {
+            font-size: 0.75rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+            display: block;
+            color: #7f8c8d;
+        }
+        
+        .highlight-verb {
+            font-weight: bold;
+            color: #d35400; /* Verben hervorheben */
+        }
+
+        /* Quiz Section */
+        .quiz-section {
+            display: grid;
+            gap: 20px;
+        }
+
+        .question-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 5px solid var(--primary);
+        }
+
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .option-label:hover { background-color: #f0f2f5; }
+
+        input[type="radio"] {
+            margin-right: 10px;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+
+        /* Feedback Styles */
+        .correct-answer {
+            color: var(--success);
+            font-weight: bold;
+        }
+        .wrong-answer {
+            color: var(--error);
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        /* Controls */
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: opacity 0.2s;
+        }
+        button:hover { opacity: 0.9; }
+
+        .btn-check { background-color: var(--success); }
+        .btn-reset { background-color: #f39c12; }
+        .btn-solution { background-color: var(--primary); }
+
+        .feedback-text {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            min-height: 24px;
+        }
+
+        .solution-box {
+            display: none;
+            margin-top: 25px;
+            padding: 20px;
+            background: #eafaf1;
+            border: 1px solid var(--success);
+            border-radius: var(--radius);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .message { max-width: 90%; font-size: 1rem; }
+            h1 { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Dialoganalyse</h1>
+        <p class="subtitle">Lesen Sie den Chat und beantworten Sie die Fragen.</p>
+    </header>
+
+    <!-- Der Dialog -->
+    <div class="chat-window">
+        <div class="message anna">
+            <span class="sender-name">Anna</span>
+            Привет, Борис! Ты где? Ты уже <span class="highlight-verb">пришел</span> в офис?
+        </div>
+        
+        <div class="message boris">
+            <span class="sender-name">Boris</span>
+            Нет, я еще не там. Я только <span class="highlight-verb">выхожу</span> из дома.
+        </div>
+
+        <div class="message anna">
+            <span class="sender-name">Anna</span>
+            Ты <span class="highlight-verb">идешь</span> пешком? Я думала, ты <span class="highlight-verb">едешь</span> на машине.
+        </div>
+
+        <div class="message boris">
+            <span class="sender-name">Boris</span>
+            Машина сломалась (ist kaputt). Я <span class="highlight-verb">приду</span> через 20 минут.
+        </div>
+
+        <div class="message anna">
+            <span class="sender-name">Anna</span>
+            Хорошо. Но меня нет. Я сейчас <span class="highlight-verb">ухожу</span> на обед.
+        </div>
+    </div>
+
+    <!-- Die Fragen -->
+    <div class="quiz-section">
+
+        <!-- Frage 1 -->
+        <div class="question-card" id="q1">
+            <div class="question-title">1. Wo ist Boris jetzt?</div>
+            <div class="options">
+                <label class="option-label">
+                    <input type="radio" name="q1" value="a"> Er ist schon im Büro (drinnen).
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="q1" value="b" data-correct="true"> Er verlässt gerade das Haus.
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="q1" value="c"> Er ist schon angekommen.
+                </label>
+            </div>
+        </div>
+
+        <!-- Frage 2 -->
+        <div class="question-card" id="q2">
+            <div class="question-title">2. Wie bewegt sich Boris heute fort?</div>
+            <div class="options">
+                <label class="option-label">
+                    <input type="radio" name="q2" value="a" data-correct="true"> Er geht zu Fuß (Beine).
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="q2" value="b"> Er fährt mit dem Auto.
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="q2" value="c"> Er fliegt.
+                </label>
+            </div>
+        </div>
+
+        <!-- Frage 3 -->
+        <div class="question-card" id="q3">
+            <div class="question-title">3. Was macht Anna?</div>
+            <div class="options">
+                <label class="option-label">
+                    <input type="radio" name="q3" value="a"> Sie kommt gerade im Büro an.
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="q3" value="b"> Sie wartet im Büro auf Boris.
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="q3" value="c" data-correct="true"> Sie geht weg (zum Mittagessen).
+                </label>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="feedback-text" id="feedback"></div>
+
+    <div class="solution-box" id="solutionBox">
+        <strong>Lösungen & Erklärung:</strong>
+        <ul style="margin-top: 10px;">
+            <li>1. <strong>Er verlässt das Haus.</strong> (Boris sagt: "выхожу из дома" = Ich gehe hinaus.)</li>
+            <li>2. <strong>Zu Fuß.</strong> (Anna fragt: "идешь пешком?", Boris bestätigt indirekt, da das Auto kaputt ist.)</li>
+            <li>3. <strong>Sie geht weg.</strong> (Anna sagt: "я ухожу" = Ich gehe weg.)</li>
+        </ul>
+    </div>
+
+    <div class="controls">
+        <button class="btn-check" onclick="checkAnswers()">Überprüfen</button>
+        <button class="btn-reset" onclick="resetForm()">Zurücksetzen</button>
+        <button class="btn-solution" onclick="toggleSolution()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    function checkAnswers() {
+        // Alle Frage-Container holen
+        const questions = document.querySelectorAll('.question-card');
+        let correctCount = 0;
+        let answeredCount = 0;
+
+        questions.forEach(card => {
+            // Radio Buttons in dieser Karte finden
+            const radios = card.querySelectorAll('input[type="radio"]');
+            const labels = card.querySelectorAll('.option-label');
+            let isAnswered = false;
+
+            // Styles zurücksetzen
+            labels.forEach(l => {
+                l.classList.remove('correct-answer', 'wrong-answer');
+                l.style.fontWeight = 'normal';
+            });
+
+            // Prüfen
+            radios.forEach(radio => {
+                const label = radio.parentElement;
+                
+                if (radio.checked) {
+                    isAnswered = true;
+                    if (radio.getAttribute('data-correct') === 'true') {
+                        correctCount++;
+                        label.classList.add('correct-answer');
+                        label.innerHTML += " ✅";
+                    } else {
+                        label.classList.add('wrong-answer');
+                    }
+                } 
+                // Markiere die richtige Antwort, auch wenn falsch gewählt wurde
+                if (radio.getAttribute('data-correct') === 'true' && !radio.checked) {
+                     // Optional: Hier könnte man die richtige Lösung anzeigen, 
+                     // wenn man möchte, dass der User sie sofort sieht.
+                }
+            });
+            
+            if(isAnswered) answeredCount++;
+        });
+
+        const feedback = document.getElementById('feedback');
+        
+        if (answeredCount < questions.length) {
+            feedback.style.color = '#e67e22';
+            feedback.textContent = "Bitte beantworten Sie alle Fragen.";
+            return;
+        }
+
+        if (correctCount === questions.length) {
+            feedback.style.color = 'var(--success)';
+            feedback.textContent = "Perfekt! Sie haben den Dialog verstanden.";
+        } else {
+            feedback.style.color = 'var(--error)';
+            feedback.textContent = `Sie haben ${correctCount} von ${questions.length} Fragen richtig.`;
+        }
+    }
+
+    function resetForm() {
+        const radios = document.querySelectorAll('input[type="radio"]');
+        radios.forEach(r => r.checked = false);
+        
+        const labels = document.querySelectorAll('.option-label');
+        labels.forEach(l => {
+            l.classList.remove('correct-answer', 'wrong-answer');
+            // Remove checkmarks added by JS
+            l.innerText = l.innerText.replace(" ✅", "");
+        });
+
+        document.getElementById('feedback').textContent = '';
+        document.getElementById('solutionBox').style.display = 'none';
+        document.querySelector('.btn-solution').textContent = "Lösung anzeigen";
+    }
+
+    function toggleSolution() {
+        const box = document.getElementById('solutionBox');
+        const btn = document.querySelector('.btn-solution');
+        
+        if (box.style.display === 'block') {
+            box.style.display = 'none';
+            btn.textContent = "Lösung anzeigen";
+        } else {
+            box.style.display = 'block';
+            btn.textContent = "Lösung verbergen";
+        }
+    }
+</script>
+
+</body>
+</html>
