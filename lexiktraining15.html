@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Zu Fuß oder Transport?</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --success: #27ae60;
+            --error: #e74c3c;
+            --bg: #f4f6f7;
+            --text: #2c3e50;
+            --card-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h1 { margin: 0; font-size: 1.8rem; }
+        p { margin-top: 10px; opacity: 0.9; }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+        }
+
+        .icon { font-size: 1.5rem; }
+
+        .task-list {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-bottom: 1px solid #ecf0f1;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+
+        .task-item:last-child { border-bottom: none; }
+
+        input[type="text"] {
+            padding: 8px 12px;
+            font-size: 1rem;
+            border: 2px solid #bdc3c7;
+            border-radius: 6px;
+            width: 140px;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .correct-input {
+            border-color: var(--success) !important;
+            background-color: #eafaf1;
+        }
+
+        .incorrect-input {
+            border-color: var(--error) !important;
+            background-color: #fdedec;
+        }
+
+        .controls {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        button:hover { opacity: 0.9; }
+        button:active { transform: scale(0.98); }
+
+        .btn-check { background-color: var(--success); }
+        .btn-reset { background-color: #f39c12; }
+        .btn-solution { background-color: var(--primary); }
+
+        .feedback-area {
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+            min-height: 24px;
+        }
+
+        .solution-display {
+            display: none;
+            margin-top: 20px;
+            background: #e8f6f3;
+            border: 1px solid var(--success);
+            padding: 15px;
+            border-radius: 8px;
+            color: var(--text);
+        }
+
+        .translation {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+            margin-left: auto;
+            font-style: italic;
+        }
+
+        /* Responsive Anpassungen */
+        @media (max-width: 600px) {
+            .task-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            .translation {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+            input[type="text"] {
+                width: 100%;
+            }
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Lexik-Training: Bewegungsverben</h1>
+        <p>Ersetzen Sie das Symbol durch das richtige russische Verb im Präsens.</p>
+    </header>
+
+    <div class="legend">
+        <div class="legend-item">
+            <span class="icon">🚶</span> = <span>идти (zu Fuß)</span>
+        </div>
+        <div class="legend-item">
+            <span class="icon">🚗 / 🚌 / 🚲</span> = <span>ехать (fahren)</span>
+        </div>
+    </div>
+
+    <div class="task-list" id="worksheet">
+        
+        <!-- Satz 1 -->
+        <div class="task-item">
+            <span>1. Я</span>
+            <span class="icon">🚶</span>
+            <input type="text" data-answer="иду" placeholder="Verb?">
+            <span>в магазин.</span>
+            <span class="translation">(Ich gehe in den Laden.)</span>
+        </div>
+
+        <!-- Satz 2 -->
+        <div class="task-item">
+            <span>2. Мы</span>
+            <span class="icon">🚗</span>
+            <input type="text" data-answer="едем" placeholder="Verb?">
+            <span>в Берлин.</span>
+            <span class="translation">(Wir fahren nach Berlin.)</span>
+        </div>
+
+        <!-- Satz 3 -->
+        <div class="task-item">
+            <span>3. Студенты</span>
+            <span class="icon">🚶</span>
+            <input type="text" data-answer="идут" placeholder="Verb?">
+            <span>в университет.</span>
+            <span class="translation">(Die Studenten gehen zur Uni.)</span>
+        </div>
+
+        <!-- Satz 4 -->
+        <div class="task-item">
+            <span>4. Ты</span>
+            <span class="icon">🚌</span>
+            <input type="text" data-answer="едешь" placeholder="Verb?">
+            <span>домой на автобусе?</span>
+            <span class="translation">(Fährst du mit dem Bus heim?)</span>
+        </div>
+
+        <!-- Satz 5 -->
+        <div class="task-item">
+            <span>5. Он</span>
+            <span class="icon">🚶</span>
+            <input type="text" data-answer="идет|идёт" placeholder="Verb?">
+            <span>по парку.</span>
+            <span class="translation">(Er geht durch den Park.)</span>
+        </div>
+
+        <!-- Satz 6 -->
+        <div class="task-item">
+            <span>6. Вы</span>
+            <span class="icon">🚗</span>
+            <input type="text" data-answer="едете" placeholder="Verb?">
+            <span>в Москву?</span>
+            <span class="translation">(Fahrt ihr nach Moskau?)</span>
+        </div>
+
+        <!-- Satz 7 -->
+        <div class="task-item">
+            <span>7. Она</span>
+            <span class="icon">🚲</span>
+            <input type="text" data-answer="едет" placeholder="Verb?">
+            <span>на работу.</span>
+            <span class="translation">(Sie fährt zur Arbeit.)</span>
+        </div>
+
+        <!-- Satz 8 -->
+        <div class="task-item">
+            <span>8. Дети</span>
+            <span class="icon">🚶</span>
+            <input type="text" data-answer="идут" placeholder="Verb?">
+            <span>в школу.</span>
+            <span class="translation">(Die Kinder gehen zur Schule.)</span>
+        </div>
+
+        <!-- Satz 9 -->
+        <div class="task-item">
+            <span>9. Я</span>
+            <span class="icon">🚗</span>
+            <input type="text" data-answer="еду" placeholder="Verb?">
+            <span>на машине.</span>
+            <span class="translation">(Ich fahre mit dem Auto.)</span>
+        </div>
+
+        <!-- Satz 10 -->
+        <div class="task-item">
+            <span>10. Они</span>
+            <span class="icon">🚶</span>
+            <input type="text" data-answer="идут" placeholder="Verb?">
+            <span>быстро.</span>
+            <span class="translation">(Sie gehen schnell.)</span>
+        </div>
+
+    </div>
+
+    <div class="feedback-area" id="feedback"></div>
+
+    <div class="solution-display" id="solutionBox">
+        <strong>Lösungen:</strong><br>
+        1. иду, 2. едем, 3. идут, 4. едешь, 5. идет, 6. едете, 7. едет, 8. идут, 9. еду, 10. идут.
+    </div>
+
+    <div class="controls">
+        <button class="btn-check" onclick="checkAnswers()">Überprüfen</button>
+        <button class="btn-reset" onclick="resetForm()">Zurücksetzen</button>
+        <button class="btn-solution" onclick="toggleSolution()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    function checkAnswers() {
+        const inputs = document.querySelectorAll('input[type="text"]');
+        let correctCount = 0;
+        
+        inputs.forEach(input => {
+            const userAnswer = input.value.trim().toLowerCase().replace('ё', 'е'); // Normalisierung
+            const validAnswers = input.getAttribute('data-answer').toLowerCase().split('|'); // Support für Alternativen (е/ё)
+            
+            // Standardisiertes Array auch normalisieren
+            const normalizedValid = validAnswers.map(ans => ans.replace('ё', 'е'));
+
+            if (normalizedValid.includes(userAnswer)) {
+                input.classList.add('correct-input');
+                input.classList.remove('incorrect-input');
+                correctCount++;
+            } else {
+                input.classList.add('incorrect-input');
+                input.classList.remove('correct-input');
+            }
+        });
+
+        const feedback = document.getElementById('feedback');
+        if (correctCount === inputs.length) {
+            feedback.style.color = 'var(--success)';
+            feedback.textContent = "Perfekt! Alle 10 Sätze sind richtig.";
+        } else {
+            feedback.style.color = 'var(--error)';
+            feedback.textContent = `Du hast ${correctCount} von ${inputs.length} richtig. Versuch es noch einmal!`;
+        }
+    }
+
+    function resetForm() {
+        const inputs = document.querySelectorAll('input[type="text"]');
+        inputs.forEach(input => {
+            input.value = '';
+            input.classList.remove('correct-input', 'incorrect-input');
+        });
+        document.getElementById('feedback').textContent = '';
+        document.getElementById('solutionBox').style.display = 'none';
+    }
+
+    function toggleSolution() {
+        const box = document.getElementById('solutionBox');
+        if (box.style.display === 'block') {
+            box.style.display = 'none';
+        } else {
+            box.style.display = 'block';
+        }
+    }
+</script>
+
+</body>
+</html>
