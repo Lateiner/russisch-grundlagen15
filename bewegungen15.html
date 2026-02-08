@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: 4 Beispiele Drag & Drop</title>
+    <!-- WICHTIG: Polyfill für Touch-Geräte (Smartphones/Tablets) -->
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary: #2980b9;
+            --success: #27ae60;
+            --error: #c0392b;
+            --bg: #f0f3f4;
+            --text: #2c3e50;
+            --card-bg: #ffffff;
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 15px;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.1);
+        }
+
+        h1 { margin: 0; font-size: 1.4rem; }
+        p.subtitle { margin: 5px 0 0; opacity: 0.9; font-size: 0.95rem; }
+
+        /* Wort-Container (Quelle) */
+        .source-container {
+            background: #fff;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            border: 2px dashed #bdc3c7;
+            min-height: 50px;
+        }
+
+        .draggable-item {
+            background: var(--primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: grab;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.15);
+            transition: transform 0.1s, background-color 0.2s;
+            user-select: none;
+        }
+
+        .draggable-item:active { cursor: grabbing; transform: scale(0.95); }
+
+        /* Grid für die 4 kleinen Karten */
+        .cards-grid {
+            display: grid;
+            /* Automatische Anpassung: Mindestens 180px breit, maximal flexibel */
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.08);
+            text-align: center;
+            border: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* SVG Bereich */
+        .svg-box {
+            width: 100%;
+            height: 120px; /* Fixe, kleine Höhe */
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Drop Zone innerhalb der Karte */
+        .drop-zone {
+            width: 90%;
+            height: 40px;
+            border: 2px dashed #95a5a6;
+            background: #fafafa;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #bdc3c7;
+            transition: all 0.2s;
+        }
+
+        .drop-zone.drag-over {
+            background: #e8f8f5;
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .drop-zone.correct {
+            border: 2px solid var(--success);
+            background: #eafaf1;
+            color: var(--success);
+            font-weight: bold;
+        }
+        
+        .drop-zone.incorrect {
+            border: 2px solid var(--error);
+            background: #fdedec;
+            color: var(--error);
+            font-weight: bold;
+        }
+
+        /* Buttons */
+        .controls {
+            margin-top: 25px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-check { background-color: var(--success); }
+        .btn-reset { background-color: #f39c12; }
+        .btn-solution { background-color: var(--primary); }
+
+        .solution-text {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            background: #d6eaf8;
+            border-radius: 6px;
+            display: none;
+            border: 1px solid #aed6f1;
+            font-size: 0.9rem;
+        }
+
+        /* Mobile Optimierung */
+        @media (max-width: 500px) {
+            .cards-grid {
+                grid-template-columns: 1fr 1fr; /* 2 Spalten auf Handy */
+            }
+            .card { padding: 8px; }
+            .svg-box { height: 100px; }
+            h1 { font-size: 1.2rem; }
+        }
+        @media (max-width: 350px) {
+            .cards-grid { grid-template-columns: 1fr; } /* 1 Spalte auf sehr kleinen Screens */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>4 Bewegungen</h1>
+        <p class="subtitle">Ziehen Sie das Verb in das richtige Feld.</p>
+    </header>
+
+    <!-- Quelle -->
+    <div class="source-container" id="source" ondrop="drop(event)" ondragover="allowDrop(event)">
+        <div class="draggable-item" draggable="true" ondragstart="drag(event)" id="v1" data-val="enter">входить</div>
+        <div class="draggable-item" draggable="true" ondragstart="drag(event)" id="v2" data-val="leave_tr">уезжать</div>
+        <div class="draggable-item" draggable="true" ondragstart="drag(event)" id="v3" data-val="exit">выходить</div>
+        <div class="draggable-item" draggable="true" ondragstart="drag(event)" id="v4" data-val="arrive">приезжать</div>
+    </div>
+
+    <!-- Grid mit 4 kleinen Karten -->
+    <div class="cards-grid">
+        
+        <!-- Karte 1: Hinein (Fuß) -->
+        <div class="card">
+            <div class="card-title">1. Hinein (zu Fuß)</div>
+            <div class="svg-box">
+                <svg viewBox="0 0 100 100">
+                    <rect x="20" y="20" width="60" height="60" fill="none" stroke="#34495e" stroke-width="3"/>
+                    <!-- Türöffnung -->
+                    <line x1="40" y1="80" x2="60" y2="80" stroke="white" stroke-width="5"/>
+                    <!-- Pfeil rein -->
+                    <defs><marker id="arrow-in" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#27ae60" /></marker></defs>
+                    <line x1="50" y1="95" x2="50" y2="50" stroke="#27ae60" stroke-width="4" marker-end="url(#arrow-in)" />
+                </svg>
+            </div>
+            <div class="drop-zone" data-expect="enter" ondrop="drop(event)" ondragover="allowDrop(event)">?</div>
+        </div>
+
+        <!-- Karte 2: Hinaus (Fuß) -->
+        <div class="card">
+            <div class="card-title">2. Hinaus (zu Fuß)</div>
+            <div class="svg-box">
+                <svg viewBox="0 0 100 100">
+                    <rect x="20" y="20" width="60" height="60" fill="none" stroke="#34495e" stroke-width="3"/>
+                    <!-- Türöffnung -->
+                    <line x1="40" y1="80" x2="60" y2="80" stroke="white" stroke-width="5"/>
+                    <!-- Pfeil raus -->
+                    <defs><marker id="arrow-out" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#c0392b" /></marker></defs>
+                    <line x1="50" y1="50" x2="50" y2="95" stroke="#c0392b" stroke-width="4" marker-end="url(#arrow-out)" />
+                </svg>
+            </div>
+            <div class="drop-zone" data-expect="exit" ondrop="drop(event)" ondragover="allowDrop(event)">?</div>
+        </div>
+
+        <!-- Karte 3: Ankommen (Fahren) -->
+        <div class="card">
+            <div class="card-title">3. Ankommen (Fahren)</div>
+            <div class="svg-box">
+                <svg viewBox="0 0 100 100">
+                    <!-- Stadt Skyline -->
+                    <polygon points="60,80 60,40 70,30 80,40 80,80" fill="#95a5a6"/>
+                    <rect x="82" y="50" width="10" height="30" fill="#7f8c8d"/>
+                    <line x1="10" y1="80" x2="95" y2="80" stroke="#34495e" stroke-width="2"/>
+                    <!-- Auto Symbol -->
+                    <circle cx="35" cy="75" r="3" fill="#34495e"/>
+                    <circle cx="50" cy="75" r="3" fill="#34495e"/>
+                    <path d="M30,75 L55,75 L52,68 L33,68 Z" fill="#3498db" opacity="0.5"/>
+                    <!-- Pfeil zum Ziel -->
+                    <defs><marker id="arrow-arr" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#2980b9" /></marker></defs>
+                    <path d="M10,40 Q35,40 55,65" fill="none" stroke="#2980b9" stroke-width="3" marker-end="url(#arrow-arr)" stroke-dasharray="4,2"/>
+                </svg>
+            </div>
+            <div class="drop-zone" data-expect="arrive" ondrop="drop(event)" ondragover="allowDrop(event)">?</div>
+        </div>
+
+        <!-- Karte 4: Wegfahren (Fahren) -->
+        <div class="card">
+            <div class="card-title">4. Wegfahren</div>
+            <div class="svg-box">
+                <svg viewBox="0 0 100 100">
+                     <!-- Stadt Skyline Links -->
+                    <polygon points="10,80 10,40 20,30 30,40 30,80" fill="#95a5a6"/>
+                    <line x1="5" y1="80" x2="95" y2="80" stroke="#34495e" stroke-width="2"/>
+                    <!-- Auto Symbol -->
+                    <circle cx="60" cy="75" r="3" fill="#34495e"/>
+                    <circle cx="75" cy="75" r="3" fill="#34495e"/>
+                    <path d="M55,75 L80,75 L77,68 L58,68 Z" fill="#e67e22" opacity="0.5"/>
+                    <!-- Pfeil Weg -->
+                    <defs><marker id="arrow-leave" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0,0 L0,6 L6,3 z" fill="#e67e22" /></marker></defs>
+                    <path d="M40,70 Q60,40 90,40" fill="none" stroke="#e67e22" stroke-width="3" marker-end="url(#arrow-leave)" stroke-dasharray="4,2"/>
+                </svg>
+            </div>
+            <div class="drop-zone" data-expect="leave_tr" ondrop="drop(event)" ondragover="allowDrop(event)">?</div>
+        </div>
+
+    </div>
+
+    <div class="solution-text" id="solutionText">
+        <strong>Lösung:</strong> 1. входить, 2. выходить, 3. приезжать, 4. уезжать
+    </div>
+
+    <div class="controls">
+        <button class="btn-check" onclick="checkAnswers()">Überprüfen</button>
+        <button class="btn-reset" onclick="resetGame()">Zurücksetzen</button>
+        <button class="btn-solution" onclick="toggleSolution()">Lösung</button>
+    </div>
+
+</div>
+
+<script>
+    /* Drag & Drop Logic */
+    function allowDrop(ev) {
+        ev.preventDefault();
+        const zone = ev.target.closest('.drop-zone');
+        if(zone) zone.classList.add('drag-over');
+    }
+
+    document.addEventListener('dragleave', function(ev) {
+        if(ev.target.closest('.drop-zone')) {
+            ev.target.closest('.drop-zone').classList.remove('drag-over');
+        }
+    });
+
+    function drag(ev) {
+        ev.dataTransfer.setData("text", ev.target.id);
+    }
+
+    function drop(ev) {
+        ev.preventDefault();
+        var data = ev.dataTransfer.getData("text");
+        var draggedEl = document.getElementById(data);
+        
+        // Finde Ziel (Zone oder Source)
+        var targetEl = ev.target.closest('.drop-zone') || ev.target.closest('.source-container');
+
+        if (targetEl) {
+            targetEl.classList.remove('drag-over');
+
+            if (targetEl.classList.contains('drop-zone')) {
+                // Wenn Zone leer oder Platzhalter
+                if (targetEl.children.length === 0 || targetEl.innerText === "?") {
+                    targetEl.innerText = "";
+                    targetEl.appendChild(draggedEl);
+                } else {
+                    // Tauschen
+                    let existing = targetEl.children[0];
+                    document.getElementById('source').appendChild(existing);
+                    targetEl.appendChild(draggedEl);
+                }
+            } else if (targetEl.id === 'source') {
+                targetEl.appendChild(draggedEl);
+                // Platzhalter in leeren Zonen wiederherstellen
+                document.querySelectorAll('.drop-zone').forEach(z => {
+                    if(z.children.length === 0) z.innerText = "?";
+                });
+            }
+        }
+    }
+
+    function checkAnswers() {
+        const zones = document.querySelectorAll('.drop-zone');
+        zones.forEach(zone => {
+            const expected = zone.getAttribute('data-expect');
+            zone.classList.remove('correct', 'incorrect');
+            
+            if (zone.children.length > 0 && zone.children[0].classList.contains('draggable-item')) {
+                const actual = zone.children[0].getAttribute('data-val');
+                if (actual === expected) {
+                    zone.classList.add('correct');
+                } else {
+                    zone.classList.add('incorrect');
+                }
+            } else {
+                zone.classList.add('incorrect');
+            }
+        });
+    }
+
+    function resetGame() {
+        const source = document.getElementById('source');
+        const items = document.querySelectorAll('.draggable-item');
+        const zones = document.querySelectorAll('.drop-zone');
+
+        items.forEach(item => source.appendChild(item));
+        
+        // Shuffle
+        for (let i = source.children.length; i >= 0; i--) {
+            source.appendChild(source.children[Math.random() * i | 0]);
+        }
+
+        zones.forEach(zone => {
+            zone.innerText = "?";
+            zone.classList.remove('correct', 'incorrect', 'drag-over');
+        });
+
+        document.getElementById('solutionText').style.display = 'none';
+    }
+
+    function toggleSolution() {
+        const sol = document.getElementById('solutionText');
+        sol.style.display = (sol.style.display === 'block') ? 'none' : 'block';
+    }
+</script>
+
+</body>
+</html>
